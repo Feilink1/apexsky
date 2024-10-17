@@ -71,13 +71,7 @@ impl MemflowOs {
         let (connector_name, connector_args, os_name) = {
             match choose_connector {
                 super::MemConnector::MemflowKvm => (
-                    {
-                        if Path::new(s!("/dev/memflow")).exists() {
-                            s!("kvm").to_string()
-                        } else {
-                            s!("qemu").to_string()
-                        }
-                    },
+                    s!("kvm").to_string(), // Always use KVM
                     String::new(),
                     s!("win32").to_string(),
                 ),
@@ -101,7 +95,7 @@ impl MemflowOs {
             tracing::info!("{}{}{}", s!("Using "), connector_name, s!(" connector."));
 
             let connector_args = if connector_args.is_empty() {
-                None
+                None 
             } else {
                 connector_args
                     .parse()
@@ -192,8 +186,8 @@ impl super::MemOs for MemflowOs {
                 proc,
             }))
         } else {
-            let connector = memflow_qemu::create_connector(&Default::default())
-                .context(s!("unable to initialize qemu connector").to_string())?;
+           // let connector = memflow_qemu::create_connector(&Default::default())
+           //     .context(s!("unable to initialize qemu connector").to_string())?;
             let mut win32_kernel = Box::new(
                 Win32Kernel::builder(connector)
                     .build_default_caches()
